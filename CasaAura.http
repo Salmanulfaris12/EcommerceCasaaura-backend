@@ -1,0 +1,6 @@
+@CasaAura_HostAddress = http://localhost:5114
+
+GET {{CasaAura_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

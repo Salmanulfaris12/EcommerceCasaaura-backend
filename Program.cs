@@ -28,20 +28,20 @@ namespace CasaAura
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-          //.ConfigureApiBehaviorOptions(options =>
-          //{
-          //    options.InvalidModelStateResponseFactory = context =>
-          //    {
-          //        var errors = context.ModelState.Values
-          //            .SelectMany(v => v.Errors)
-          //            .Select(e => e.ErrorMessage)
-          //            .ToList();
+            builder.Services.AddControllers()
+          .ConfigureApiBehaviorOptions(options =>
+          {
+              options.InvalidModelStateResponseFactory = context =>
+              {
+                  var errors = context.ModelState.Values
+                      .SelectMany(v => v.Errors)
+                      .Select(e => e.ErrorMessage)
+                      .ToList();
 
-          //        var response = new ApiResponses<string>(400, "Validation error occurred", null, string.Join("; ", errors));
-          //        return new BadRequestObjectResult(response);
-          //    };
-          //});
+                  var response = new ApiResponses<string>(400, "Validation error occurred", null, string.Join("; ", errors));
+                  return new BadRequestObjectResult(response);
+              };
+          });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

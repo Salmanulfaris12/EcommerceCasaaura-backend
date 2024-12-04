@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CasaAura.Models.ApiResposeModel;
+using CasaAura.Models.CartModels;
 using CasaAura.Models.WishListModels;
 using CasaAura.Models.WishListModels.WishListDTOs;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,11 @@ namespace CasaAura.Services.WishListServices
         {
             try
             {
+                var productExists = await _context.Products.AnyAsync(p => p.ProductId == productId);
+                if (!productExists)
+                {
+                    return "Product does not exist.";
+                }
                 var isExist = await _context.WishLists.Include(x => x.Products).FirstOrDefaultAsync(w => w.ProductId == productId && w.UserId == userId);
                 if (isExist == null)
                 {

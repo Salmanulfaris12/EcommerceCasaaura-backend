@@ -70,7 +70,7 @@ namespace CasaAura.Controllers
                 var res= await _service.RemoveFromCart(userId,productId);           
                 if (!res)
                 {
-                    return BadRequest(new ApiResponses<string>(400,"Item not found in cart",null,"Item not found in Cart"));
+                    return BadRequest(new ApiResponses<string>(404,"Item not found in cart",null,"Item not found in Cart"));
                 }
                 return Ok(new ApiResponses<string>(200,"Item deleted Successfully"));
             }
@@ -112,7 +112,7 @@ namespace CasaAura.Controllers
                 var res = await _service.DecreaseQty(userId, productId);
                 if (!res)
                 {
-                    return BadRequest(new ApiResponses<string>(400,"Item not Found in Cart ",null,"Item not Found in Cart"));
+                    return BadRequest(new ApiResponses<string>(404,"Item not Found in Cart ",null,"Item not Found in Cart"));
                 }
                 return Ok(new ApiResponses<string>(200,"Quantity decreased successfully"));
             }

@@ -54,6 +54,10 @@ namespace CasaAura.Controllers
             try
             {
                 var products=await _service.GetProductbyCategory(CategoryName);
+                if (products.Count == 0)
+                {
+                    return NotFound(new ApiResponses<string>(404, $"product with {CategoryName} not found"));
+                }
                 return Ok(new ApiResponses<List<ProductDTO>>(200,"Product fetched successfully",products));
             }
             catch (Exception ex)

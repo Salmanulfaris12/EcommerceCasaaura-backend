@@ -95,7 +95,7 @@ namespace CasaAura.Services.AuthServices
                 {
                     Token = token,
                     Role = usr.Role,
-                    Email = usr.Name,
+                    Email = usr.Email,
                     Id = usr.Id,
                     Name=usr.Name
 

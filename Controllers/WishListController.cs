@@ -3,6 +3,7 @@ using CasaAura.Models.WishListModels.WishListDTOs;
 using CasaAura.Services.WishListServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -25,6 +26,10 @@ namespace CasaAura.Controllers
             {
                 int userId = Convert.ToInt32(HttpContext.Items["UserId"]);
                 var res = await _service.GetWishList(userId);
+                if (res.Count==0)
+                {
+                    return Ok(new ApiResponses<List<WishListResDTO>>(200,"WishList is Empty",res));
+                }
                 return Ok(new ApiResponses<List<WishListResDTO>>(200,"WishList Fetched Successfully",res));
             }
             catch(Exception ex)
@@ -40,6 +45,10 @@ namespace CasaAura.Controllers
             {
                 int userId = Convert.ToInt32(HttpContext.Items["UserId"]);
                 var res = await _service.AddorRemove(userId, productId);
+                if (res == "Product does not exist.")
+                {
+                    return NotFound(new ApiResponses<string>(404, res));
+                }
                 return Ok(new ApiResponses<string>(200,res));
 
             }catch(Exception ex)

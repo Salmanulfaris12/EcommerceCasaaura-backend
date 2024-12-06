@@ -16,13 +16,13 @@ namespace CasaAura.Controllers
         {
             _service = service;
         }
-        [HttpGet]
+        [HttpGet("All")]
         public async Task<IActionResult> GetCategories()
         {
             try
             {
                 var CategoryList = await _service.GetCategories();
-                return Ok(new ApiResponses<List<CategoryDTO>>(200,"Categories retrieved successfully",CategoryList));
+                return Ok(new ApiResponses<List<CategoryResDTO>>(200,"Categories retrieved successfully",CategoryList));
             }
             catch (Exception ex)
             {
@@ -30,12 +30,12 @@ namespace CasaAura.Controllers
             }
         }
         [Authorize(Roles = "admin")]
-        [HttpPost]
-        public async Task<IActionResult> AddCategory(CategoryDTO categorydto)
+        [HttpPost("Add")]
+        public async Task<IActionResult> AddCategory([FromForm]CategoryDTO categorydto,IFormFile image)
         {
             try
             {
-                var res = await _service.AddCategory(categorydto);
+                var res = await _service.AddCategory(categorydto,image);
                 if (res)
                 {
                     return Ok(new ApiResponses<bool>(200,"Category added successfully",res));

@@ -49,14 +49,14 @@ namespace CasaAura.Controllers
             }
         }
         [HttpGet("GetByCategory")]
-        public async Task<IActionResult>GetProductByCategory(string CategoryName)
+        public async Task<IActionResult>GetProductByCategory(int CategoryId)
         {
             try
             {
-                var products=await _service.GetProductbyCategory(CategoryName);
+                var products=await _service.GetProductbyCategory(CategoryId);
                 if (products.Count == 0)
                 {
-                    return NotFound(new ApiResponses<string>(404, $"product with {CategoryName} not found"));
+                    return NotFound(new ApiResponses<string>(404, $"product with {CategoryId} not found"));
                 }
                 return Ok(new ApiResponses<List<ProductDTO>>(200,"Product fetched successfully",products));
             }
@@ -129,7 +129,7 @@ namespace CasaAura.Controllers
         }
         [Authorize(Roles ="admin")]
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult>UpdateProduct(int id, [FromForm] AddProductDTO productdto,IFormFile image)
+        public async Task<IActionResult>UpdateProduct(int id, [FromForm] AddProductDTO productdto,IFormFile image = null)
         {
             try
             {

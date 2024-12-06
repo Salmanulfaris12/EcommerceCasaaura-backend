@@ -17,7 +17,7 @@ namespace CasaAura.Services.CartServices
         {
             _context = context;
         }
-        public async Task<List<CartViewDTO>>GetCartItems(int userId)
+        public async Task<CartResDTO>GetCartItems(int userId)
         {
             try
             {
@@ -25,11 +25,11 @@ namespace CasaAura.Services.CartServices
                 {
                     throw new Exception("User id is null");
                 }
-                var user = await _context.Carts.Include(c => c.CartItems).ThenInclude(p => p.Product)
+                var cart = await _context.Carts.Include(c => c.CartItems).ThenInclude(p => p.Product)
                     .FirstOrDefaultAsync(x => x.UserId == userId);
-                if (user != null)
+                if (cart != null)
                 {
-                    return user.CartItems.Select(x => new CartViewDTO
+                    var cartitem= cart.CartItems.Select(x => new CartViewDTO
                     {
                         ProductId = x.ProductId,
                         ProductName = x.Product.ProductName,
@@ -39,8 +39,16 @@ namespace CasaAura.Services.CartServices
                         Image = x.Product.Image
 
                     }).ToList();
+                    var TotalItems = cartitem.Count();
+                    var TotalPrice = cartitem.Sum(i => i.TotalAmount);
+                    return new CartResDTO
+                    {
+                        TotalItem = TotalItems,
+                        TotalPrice = TotalPrice,
+                        cartItemsperUser = cartitem
+                    };
                 }
-                return new List<CartViewDTO>();
+                return new CartResDTO();
             }
             catch (Exception ex)
             {
@@ -64,7 +72,7 @@ namespace CasaAura.Services.CartServices
                 {
                     return new ApiResponses<CartItem>(404, $"Product with {productId} is not found");
                 }
-                if (product?.Stock <= 0)
+                if (product?.Stock == 0 )
                 {
 
                     return new ApiResponses<CartItem>(404, "Out of stock");
@@ -86,7 +94,11 @@ namespace CasaAura.Services.CartServices
                 var check=user.Cart.CartItems.FirstOrDefault(x=>x.ProductId==productId);
                 if (check != null)
                 {
-                    if (check.Quantity < 10)
+                    if (check.Quantity == product.Stock)
+                    {
+                        return new ApiResponses<CartItem>(400, "Out of stock");
+                    }
+                    if (check.Quantity < product.Stock)
                     {
                         check.Quantity++;
                         await _context.SaveChangesAsync();
@@ -109,6 +121,29 @@ namespace CasaAura.Services.CartServices
             {
                 return new ApiResponses<CartItem>(500, "Internal Server Error Occured");
             }
+        }
+        public async Task<bool>RemoveAllItems(int userId)
+        {
+            try
+            {
+                var user = await _context.Users.Include(u => u.Cart)
+                    .ThenInclude(u => u.CartItems)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    throw new Exception("user not found");
+                    return false;
+                }
+                user.Cart.CartItems.Clear();
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
         public async Task<bool>RemoveFromCart(int userId ,int productId)
         {

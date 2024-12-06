@@ -14,7 +14,7 @@ namespace CasaAura.Mapper
     {
         public MapperProfile() { 
             CreateMap<User,UserRegisterDTO>().ReverseMap();
-            CreateMap<Category,CategoryDTO>().ReverseMap();
+            CreateMap<Category,CategoryResDTO>().ReverseMap();
             CreateMap<Product,ProductDTO>().ReverseMap();
             CreateMap<Product, AddProductDTO>().ReverseMap();
             CreateMap<WishList,WishListDTO>().ReverseMap();

@@ -25,11 +25,11 @@ namespace CasaAura.Controllers
             {
                 int userId = Convert.ToInt32(HttpContext.Items["UserId"]);
                 var res= await _service.GetCartItems(userId);
-                if (res.Count == 0)
+                if (res==null)
                 {
-                    return Ok(new ApiResponses<IEnumerable<CartViewDTO>>(200,"Cart is Empty",res));
+                    return Ok(new ApiResponses<CartResDTO>(200,"Cart is Empty",res));
                 }
-                return Ok(new ApiResponses<IEnumerable<CartViewDTO>>(200,"Cart Fetched Successfully",res));
+                return Ok(new ApiResponses<CartResDTO>(200,"Cart Fetched Successfully",res));
             }
             catch (Exception ex)
             {
@@ -52,13 +52,32 @@ namespace CasaAura.Controllers
                 {
                     return NotFound(new ApiResponses<string>(404,res.Message));
                 }
-                return BadRequest(new ApiResponses<string>(400,"Bad request"));
+                return BadRequest(new ApiResponses<string>(400,"Bad request",null,res.Message));
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new ApiResponses<string>(500,"Internal server Error",null,ex.Message));
             }
 
+        }
+        [HttpDelete("DeleteAll")]
+        [Authorize]
+        public async Task<IActionResult> RemoveAllItems()
+        {
+            try
+            {
+                int userId =Convert.ToInt32(HttpContext.Items["UserId"]);
+                var res = await _service.RemoveAllItems(userId);
+                if(!res)
+                {
+                    return BadRequest(new ApiResponses<string>(400,"failed to clear the cart"));
+                }
+                return Ok(new ApiResponses<string>(200,"Items Cleared successfully"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponses<string>(500, "AnUnexpected Error Occured",null,ex.Message));
+            }
         }
         [HttpDelete("Delete/{productId}")]
         [Authorize]

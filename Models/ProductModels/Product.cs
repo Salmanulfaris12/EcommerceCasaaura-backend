@@ -14,8 +14,8 @@ namespace CasaAura.Models.ProductModels
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than or equal to 0")]
         public decimal ProductPrice { get; set; }
-        [Required(ErrorMessage ="Image url is required")]
-        [Url(ErrorMessage ="Invalid url Format")]
+        //[Required(ErrorMessage ="Image url is required")]
+        //[Url(ErrorMessage ="Invalid url Format")]
         public string? Image {  get; set; }
         [Required]
         public int CategoryId { get; set; }

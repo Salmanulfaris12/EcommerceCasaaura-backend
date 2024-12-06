@@ -78,12 +78,12 @@ namespace CasaAura.Services.ProductServices
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<List<ProductDTO>> GetProductbyCategory(string categoryName)
+        public async Task<List<ProductDTO>> GetProductbyCategory(int categoryId)
         {
             try
             {
                 var products = await _context.Products.Include(p => p.Category)
-                    .Where(x => x.Category.CategoryName == categoryName)
+                    .Where(x => x.Category.CategoryId == categoryId)
                     .Select(p => new ProductDTO
                     {
                         ProductId = p.ProductId,
@@ -198,7 +198,7 @@ namespace CasaAura.Services.ProductServices
                 throw new Exception(e.Message);
             }
         }
-        public async Task UpdateProduct(int id, AddProductDTO productdto,IFormFile image)
+        public async Task UpdateProduct(int id, AddProductDTO productdto,IFormFile image = null)
         {
             try
             {
@@ -220,12 +220,16 @@ namespace CasaAura.Services.ProductServices
                     product.Material = productdto.Material;
                     product.CategoryId = productdto.CategoryId;
 
-
+                    if (image == null)
+                    {
+                        product.Image = product.Image;
+                    }
                     if (image != null && image.Length > 0)
                     {
                         string imageUrl = await _cloudinaryService.UploadImageAsync(image);
                         product.Image = imageUrl;
                     }
+                    await _context.SaveChangesAsync();
 
                 }
                 else

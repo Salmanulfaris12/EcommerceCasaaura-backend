@@ -42,6 +42,9 @@ namespace CasaAura
                 .Property(u => u.IsBlocked)
                 .HasDefaultValue(false);
 
+            modelBuilder.Entity<Category>()
+                .Property(u => u.Image)
+                .HasDefaultValue(null);
             //Product to category relation
             modelBuilder.Entity<Category>()
                 .HasMany(c => c.Products)

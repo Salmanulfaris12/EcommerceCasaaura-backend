@@ -7,7 +7,7 @@ namespace CasaAura.Services.ProductServices
         Task AddProduct(AddProductDTO productdto,IFormFile image);
         Task<List<ProductDTO>> GetAllProducts();
         Task<ProductDTO> GetProductById(int id);
-        Task<List<ProductDTO>>GetProductbyCategory(string categoryName);
+        Task<List<ProductDTO>>GetProductbyCategory(int categoryId);
         Task<List<ProductDTO>>SearchProduct(string search);
         Task<List<ProductDTO>>ProductPagination(int pagenumber=1, int pageSize=10); 
         Task<bool>RemoveProduct(int id);

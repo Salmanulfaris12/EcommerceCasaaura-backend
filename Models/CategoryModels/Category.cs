@@ -8,6 +8,7 @@ namespace CasaAura.Models.CategoryModels
         public int CategoryId { get; set; }
         [Required]
         public string? CategoryName { get; set; }
+        public string Image { get; set; }
         public virtual ICollection<Product>?Products { get; set; }
     }
 }

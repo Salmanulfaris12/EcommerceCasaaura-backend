@@ -94,7 +94,7 @@ namespace CasaAura.Services.CartServices
                 var check=user.Cart.CartItems.FirstOrDefault(x=>x.ProductId==productId);
                 if (check != null)
                 {
-                    if (check.Quantity == product.Stock)
+                    if (check.Quantity >= product.Stock)
                     {
                         return new ApiResponses<CartItem>(400, "Out of stock");
                     }

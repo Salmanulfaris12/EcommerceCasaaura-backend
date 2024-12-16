@@ -118,7 +118,7 @@ namespace CasaAura.Controllers
             }
             catch(Exception ex)
             {
-                return StatusCode(500, new ApiResponses<string>(500,"Internal Server Error"));
+                return StatusCode(500, new ApiResponses<string>(500,"Internal Server Error",null,ex.Message));
             }
         }
         [HttpPut("DecreaseQty/{productId}")]

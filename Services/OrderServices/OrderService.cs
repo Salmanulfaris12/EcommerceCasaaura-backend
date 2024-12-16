@@ -75,19 +75,16 @@ namespace CasaAura.Services.OrderServices
                 {
                     UserId = userId,
                     OrderDate = DateTime.Now,
-                    CustomerName = createOrderDTO.CustomerName,
-                    CustomerEmail = createOrderDTO.CustomerEmail,
-                    CustomerCity = createOrderDTO.CustomerCity,
-                    CustomerPhone = createOrderDTO.CustomerPhone,
-                    HomeAddress = createOrderDTO.HomeAddress,
+                    OrderStatus = "pending",
+                    AddressId = createOrderDTO.AddressId,
                     TotalAmount = createOrderDTO.Totalamount,
                     OrderString = createOrderDTO.OrderString,
                     TransactionId = createOrderDTO.TransactionId,
-                    OrderItems=cart.CartItems.Select(c=>new OrderItem
+                    OrderItems = cart.CartItems.Select(c => new OrderItem
                     {
                         productId = c.ProductId,
                         Quantity = c.Quantity,
-                        TotalPrice=c.Quantity*c.Product.ProductPrice
+                        TotalPrice = c.Quantity * c.Product.ProductPrice
                     }).ToList(),
                 };
                 foreach (var cartItem in cart.CartItems)
@@ -118,47 +115,64 @@ namespace CasaAura.Services.OrderServices
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<List<ViewOrderDTO>> GetOrderDetails(int userId)
+        public async Task<List<ViewOrderUserDetailDTO>> GetOrderDetails(int userId)
         {
-            var orders= await _context.Orders.Include(o=>o.OrderItems).ThenInclude(p=>p.Product).Where(x=>x.UserId == userId).ToListAsync();
-            var OrderDetails=new List<ViewOrderDTO>();
-            foreach(var order in orders)
+            try
             {
-                foreach(var item in order.OrderItems)
+                var orders = await _context.Orders.Include(i => i.OrderItems)
+                                .ThenInclude(i => i.Product)
+                                .Where(i => i.UserId == userId)
+                                .ToListAsync();
+
+                if (orders == null || !orders.Any())
                 {
-                    var OrderDetail = new ViewOrderDTO
-                    {
-                        Id = item.productId,
-                        OrderDate = order.OrderDate,
-                        ProductName = item.Product.ProductName,
-                        Image = item.Product.Image,
-                        OrderId = item.OrderId,
-                        Quatity = item.Quantity,
-                        TotalAmount = order.TotalAmount,
-                    };
-                    OrderDetails.Add(OrderDetail);
+                    return new List<ViewOrderUserDetailDTO>();
                 }
+                var orderdetails = orders.Select(i => new ViewOrderUserDetailDTO
+                {
+                    Id = i.Id,
+                    OrderId = i.OrderString,
+                    OrderDate = i.OrderDate,
+                    OrderStatus = i.OrderStatus,
+                    TransactionId = i.TransactionId,
+                    OrderProducts = i.OrderItems.Select(o => new CartViewDTO
+                    {
+                        ProductId = o.productId,
+                        ProductName = o.Product.ProductName,
+                        Price = o.Product.ProductPrice,
+                        TotalAmount = o.TotalPrice,
+                        Quantity = o.Quantity,
+                        Image = o.Product.Image
+                    }).ToList(),
+
+                }).ToList();
+                return orderdetails;
             }
-            return OrderDetails;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
         }
         public async Task<List<ViewOrderAdminDTO>> GetOrderDetailsAdmin()
         {
-            var orders=await _context.Orders.Include(x=>x.OrderItems).ToListAsync();
-            if (orders.Count > 0)
-            {
-                var orderdetails=orders.Select(o=>new ViewOrderAdminDTO
+            var orderdetails = await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                .Select(o => new ViewOrderAdminDTO
                 {
                     id = o.Id,
                     OrderDate = o.OrderDate,
-                    CustomerEmail = o.CustomerEmail,
-                    CustomerNmae=o.CustomerName,
-                    TransactionId = o.TransactionId,
-                    
-                }).ToList();
-                return orderdetails;
-            }
-            return new List<ViewOrderAdminDTO>();
+                    orderId=o.OrderString,
+                    CustomerEmail = o.User.Email,
+                    OrderStatus=o.OrderStatus,
+                    CustomerName = o.User.Name,
+                    TransactionId = o.TransactionId
+                })
+                .ToListAsync();
+
+            return orderdetails;
+            //return new List<ViewOrderAdminDTO>();
         }
         public async Task<decimal> TotalRevenue()
         {
@@ -199,13 +213,9 @@ namespace CasaAura.Services.OrderServices
                 var orderdetails = orders.Select(i => new ViewOrderUserDetailDTO
                 {
                     Id = i.Id,
-                    CustomerName = i.CustomerName,
-                    CustomerEmail = i.CustomerEmail,
-                    CustomerCity = i.CustomerCity,
-                    CustomerPhone = i.CustomerPhone,
-                    HomeAddress = i.HomeAddress,
                     OrderId = i.OrderString,
                     OrderDate = i.OrderDate,
+                    OrderStatus=i.OrderStatus,
                     TransactionId = i.TransactionId,
                     OrderProducts = i.OrderItems.Select(o => new CartViewDTO
                     {
@@ -223,6 +233,27 @@ namespace CasaAura.Services.OrderServices
             {
                 throw new Exception(ex.Message);
             }
+        }
+        public async Task UpdateOrder(string orderId, string orderStatus)
+        {
+            try
+            {
+                var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderString == orderId);
+                if (order != null)
+                {
+                    order.OrderStatus = orderStatus;
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new Exception("Order with this order Id not found");
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
     }

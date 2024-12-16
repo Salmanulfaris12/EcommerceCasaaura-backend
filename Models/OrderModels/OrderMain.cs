@@ -1,4 +1,5 @@
-﻿using CasaAura.Models.UserModels;
+﻿using CasaAura.Models.AddressModels;
+using CasaAura.Models.UserModels;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,24 +12,20 @@ namespace CasaAura.Models.OrderModels
         public int UserId {  get; set; }
         [Required]
         public DateTime OrderDate { get; set; }
+
         [Required]
-        public string CustomerName { get; set; }
-        [Required]
-        public string CustomerEmail { get; set; }
-        [Required]
-        public string CustomerPhone { get; set; }
-        [Required]
-        public string CustomerCity { get; set; }
-        [Required]
-        public string HomeAddress { get; set; }
+        public int AddressId { get; set; }
         [Required]
         public decimal TotalAmount { get; set; }
+        [Required]
+        public string OrderStatus { get; set; }
         [Required]
         public string OrderString { get; set; }
         [Required]
         public string TransactionId { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
+        public virtual Address? Address { get; set; }
         public virtual List<OrderItem> OrderItems { get; set; }
 
 

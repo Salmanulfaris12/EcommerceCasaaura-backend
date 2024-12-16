@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CasaAura.Models.AddressModels;
+using CasaAura.Models.AddressModels.AddresDTOs;
 using CasaAura.Models.CategoryModels;
 using CasaAura.Models.CategoryModels.CategoryDTOs;
 using CasaAura.Models.ProductModels;
@@ -19,6 +21,7 @@ namespace CasaAura.Mapper
             CreateMap<Product, AddProductDTO>().ReverseMap();
             CreateMap<WishList,WishListDTO>().ReverseMap();
             CreateMap<User,UserViewDTO>().ReverseMap();
+            CreateMap<Address,AddressResDTO>().ReverseMap();
         }
     }
 }

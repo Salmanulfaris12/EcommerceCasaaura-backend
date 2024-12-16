@@ -1,4 +1,5 @@
-﻿using CasaAura.Models.CartModels;
+﻿using CasaAura.Models.AddressModels;
+using CasaAura.Models.CartModels;
 using CasaAura.Models.OrderModels;
 using CasaAura.Models.WishListModels;
 using Razorpay.Api;
@@ -26,6 +27,7 @@ namespace CasaAura.Models.UserModels
         public virtual Cart? Cart { get; set; }
         public virtual List<OrderMain>Orders { get; set; }
         public List<WishList>WishLists { get; set; }
+        public ICollection<Address> Addresses { get; set; }
 
 
     }

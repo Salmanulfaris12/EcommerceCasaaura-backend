@@ -3,6 +3,7 @@
 using CasaAura.Mapper;
 using CasaAura.MiddleWare;
 using CasaAura.Models.ApiResposeModel;
+using CasaAura.Services.AddressServices;
 using CasaAura.Services.AuthServices;
 using CasaAura.Services.CartServices;
 using CasaAura.Services.CategoryServices;
@@ -88,6 +89,7 @@ namespace CasaAura
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+            builder.Services.AddScoped<IAddressService, AddressService>();
                 
 
 

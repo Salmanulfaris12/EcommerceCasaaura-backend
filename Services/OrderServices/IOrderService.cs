@@ -7,8 +7,9 @@ namespace CasaAura.Services.OrderServices
         Task<string> RazorOrderCreate(long price);
         bool RazorPayment(PaymentDTO payment);
         Task<bool>CreateOrder(int userId ,CreateOrderDTO createOrderDTO);
-        Task<List<ViewOrderDTO>>GetOrderDetails(int userId);
+        Task UpdateOrder(string orderId, string orderStatus);
         Task<List<ViewOrderAdminDTO>> GetOrderDetailsAdmin();
+        Task<List<ViewOrderUserDetailDTO>>GetOrderDetails(int userId);
         Task<List<ViewOrderUserDetailDTO>> GetOrdersByUserId(int userId);
         Task<decimal> TotalRevenue();
         Task<int> TotalProductsPurchased();

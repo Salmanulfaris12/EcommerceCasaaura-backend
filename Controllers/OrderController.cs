@@ -91,19 +91,20 @@ namespace CasaAura.Controllers
             }
         }
         [HttpGet("get-order-details-admin")]
-        [Authorize(Roles ="admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetOrderDetailsAdmin()
         {
             try
             {
-                var res = _service.GetOrderDetailsAdmin();
+                var res = await _service.GetOrderDetailsAdmin();
                 return Ok(res);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500,ex.Message);
+                return StatusCode(500, new ApiResponses<string>(500,"An un expected error occured ",null,ex.Message));
             }
         }
+
         [HttpGet("GetOrderByUserId/{userId}")]
         [Authorize(Roles ="admin")]
         public async Task<IActionResult>GetOrderByUserId(int userId)
@@ -148,6 +149,19 @@ namespace CasaAura.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpPatch("update-orderstatus")]
+        [Authorize(Roles ="admin")]
+        public async Task<IActionResult>UpdateOrder(string orderId,string orderStatus)
+        {
+            try
+            {
+                await _service.UpdateOrder(orderId, orderStatus);
+                return Ok(new ApiResponses<string>(200, "OrderStatus Updated succcessfully"));
+            }
+            catch (Exception ex) {
+                return StatusCode(500,new ApiResponses<string>(500,"an unexpected error occured",null,ex.Message));
             }
         }
 

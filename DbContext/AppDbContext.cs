@@ -1,4 +1,5 @@
-﻿using CasaAura.Models.CartModels;
+﻿using CasaAura.Models.AddressModels;
+using CasaAura.Models.CartModels;
 using CasaAura.Models.CategoryModels;
 using CasaAura.Models.OrderModels;
 using CasaAura.Models.ProductModels;
@@ -18,6 +19,7 @@ namespace CasaAura
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<OrderMain>Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         private readonly IConfiguration _configuration;
         public AppDbContext(IConfiguration configuration)
@@ -103,6 +105,21 @@ namespace CasaAura
             modelBuilder.Entity<OrderItem>()
                 .Property(pr => pr.TotalPrice).
                 HasPrecision(30, 2);
+
+            modelBuilder.Entity<Address>()
+                .HasOne(a=>a.User)
+                .WithMany(u=>u.Addresses)
+                .HasForeignKey(u=>u.UserId);
+
+            modelBuilder.Entity<OrderMain>()
+                .HasOne(o => o.Address)
+                .WithMany(a => a.Orders)
+                .HasForeignKey(u => u.AddressId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderMain>()
+                .Property(o => o.OrderStatus)
+                .HasDefaultValue("pending");
 
         }
     }

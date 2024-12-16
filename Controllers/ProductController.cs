@@ -67,7 +67,8 @@ namespace CasaAura.Controllers
         }
         [Authorize(Roles = "admin")]
         [HttpPost("Add")]
-        public async Task<IActionResult> AddProducts([FromForm] AddProductDTO newProduct,IFormFile image)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> AddProducts([FromForm] AddProductDTO newProduct, IFormFile image)
         {
             try
             {   
